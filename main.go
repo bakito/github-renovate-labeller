@@ -172,8 +172,8 @@ func ensureLabelExists(ctx context.Context, client *github.Client, owner, repo, 
 			existingColor := strings.ToLower(strings.TrimPrefix(label.GetColor(), "#"))
 			if existingColor != strings.ToLower(color) {
 				_, _, err := client.Issues.EditLabel(ctx, owner, repo, name, &github.Label{
-					Name:  github.String(name),
-					Color: github.String(color),
+					Name:  new(name),
+					Color: new(color),
 				})
 				if err != nil {
 					return fmt.Errorf("failed to update label color for %q: %w", name, err)
@@ -186,8 +186,8 @@ func ensureLabelExists(ctx context.Context, client *github.Client, owner, repo, 
 
 	// Label doesn't exist, create it
 	_, _, err = client.Issues.CreateLabel(ctx, owner, repo, &github.Label{
-		Name:  github.String(name),
-		Color: github.String(color),
+		Name:  new(name),
+		Color: new(color),
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create label %q: %w", name, err)
@@ -218,25 +218,25 @@ func listRepos(ctx context.Context, client *github.Client, owner string) ([]stri
 			if err != nil {
 				return nil, fmt.Errorf("failed to list repositories: %w", err)
 			}
- 		for _, r := range repoList {
- 			if r.GetArchived() {
- 				continue
- 			}
- 			repos = append(repos, r.GetName())
- 		}
- 		if resp.NextPage == 0 {
- 			break
- 		}
- 		orgOpts.Page = resp.NextPage
- 		continue
- 	}
+			for _, r := range repoList {
+				if r.GetArchived() {
+					continue
+				}
+				repos = append(repos, r.GetName())
+			}
+			if resp.NextPage == 0 {
+				break
+			}
+			orgOpts.Page = resp.NextPage
+			continue
+		}
 
- 	for _, r := range repoList {
- 		if r.GetArchived() {
- 			continue
- 		}
- 		repos = append(repos, r.GetName())
- 	}
+		for _, r := range repoList {
+			if r.GetArchived() {
+				continue
+			}
+			repos = append(repos, r.GetName())
+		}
 
 		if resp.NextPage == 0 {
 			break
