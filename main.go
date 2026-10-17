@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -19,6 +20,25 @@ const (
 )
 
 func main() {
+	help := flag.Bool("h", false, "Show help")
+	flag.Bool("help", false, "Show help")
+	flag.Parse()
+	if *help {
+		fmt.Println("Usage: github-renovate-labeller [flags]")
+		fmt.Println()
+		fmt.Println("Flags:")
+		fmt.Println("  -h, --help  Show this help message")
+		fmt.Println()
+		fmt.Println("Environment variables:")
+		fmt.Println("  GITHUB_TOKEN    Required. GitHub personal access token.")
+		fmt.Println("  GITHUB_OWNER    Required. GitHub owner (user or organization).")
+		fmt.Println("  GITHUB_REPO     Optional. If set, only process this repository.")
+		fmt.Println("                  If omitted, all repositories for the owner are processed.")
+		fmt.Println("  GITHUB_DRY_RUN  Optional. Set to 'true' or '1' to preview without")
+		fmt.Println("                  making any changes.")
+		os.Exit(0)
+	}
+
 	dryRun := strings.ToLower(os.Getenv("GITHUB_DRY_RUN")) == "true" || strings.ToLower(os.Getenv("GITHUB_DRY_RUN")) == "1"
 	if dryRun {
 		log.Println("running in dry-run mode — no labels will be added")
@@ -26,12 +46,12 @@ func main() {
 
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
-		log.Fatal("GITHUB_TOKEN environment variable is required")
+		log.Fatal("GITHUB_TOKEN environment variable is required (see --help)")
 	}
 
 	owner := os.Getenv("GITHUB_OWNER")
 	if owner == "" {
-		log.Fatal("GITHUB_OWNER environment variable is required")
+		log.Fatal("GITHUB_OWNER environment variable is required (see --help)")
 	}
 
 	repo := os.Getenv("GITHUB_REPO")
