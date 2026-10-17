@@ -1,6 +1,6 @@
 module github.com/bakito/github-renovate-labeller
 
-go 1.26.5
+go 1.27.2
 
 require (
 	github.com/google/go-github/v69 v69.2.0

@@ -102,12 +102,12 @@ func main() {
 
 			if hasLabel(existingLabels, labelName) {
 				totalSkipped++
-				log.Printf("%s/%s: issue #%d already has %q label, skipping", owner, r, issueNumber, labelName)
+				log.Printf("✅ %s/%s: issue #%d already has %q label, skipping", owner, r, issueNumber, labelName)
 				continue
 			}
 
 			if dryRun {
-				log.Printf("%s/%s: [dry-run] would add %q label to issue #%d", owner, r, labelName, issueNumber)
+				log.Printf("❓ %s/%s: [dry-run] would add %q label to issue #%d", owner, r, labelName, issueNumber)
 				continue
 			}
 
@@ -117,7 +117,7 @@ func main() {
 			}
 
 			totalLabeled++
-			log.Printf("%s/%s: added %q label to issue #%d", owner, r, labelName, issueNumber)
+			log.Printf("➕ %s/%s: added %q label to issue #%d", owner, r, labelName, issueNumber)
 		}
 	}
 
@@ -126,10 +126,8 @@ func main() {
 
 func fetchRenovateDependencyDashboardIssues(ctx context.Context, client *github.Client, owner, repo string) ([]*github.Issue, error) {
 	listOpts := &github.IssueListByRepoOptions{
-		State: "open",
-		ListOptions: github.ListOptions{
-			PerPage: 100,
-		},
+		State:   "open",
+		PerPage: 100,
 	}
 
 	var allIssues []*github.Issue
@@ -218,9 +216,7 @@ func ensureLabelExists(ctx context.Context, client *github.Client, owner, repo, 
 
 func listRepos(ctx context.Context, client *github.Client, owner string) ([]string, error) {
 	orgOpts := &github.RepositoryListByOrgOptions{
-		ListOptions: github.ListOptions{
-			PerPage: 100,
-		},
+		PerPage: 100,
 	}
 
 	var repos []string
@@ -229,10 +225,8 @@ func listRepos(ctx context.Context, client *github.Client, owner string) ([]stri
 		if err != nil {
 			// If it's not an org, try listing by user
 			userOpts := &github.RepositoryListByUserOptions{
-				ListOptions: github.ListOptions{
-					PerPage: 100,
-					Page:    orgOpts.Page,
-				},
+				PerPage: 100,
+				Page:    orgOpts.Page,
 			}
 			repoList, resp, err = client.Repositories.ListByUser(ctx, owner, userOpts)
 			if err != nil {
